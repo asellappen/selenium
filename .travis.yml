@@ -1,4 +1,19 @@
+# ----------------------------------------------------------------------------
+#
+# Package             : selenium
+# Source Repo         : https://github.com/scikit-image/selenium
+# Travis Job Link     : https://travis-ci.com/github/asellappen/selenium/
+# Created travis.yml  : Yes
+# Maintainer          : Arumugam N S <asellappen@yahoo.com> / Priya Seth<sethp@us.ibm.com>
+#
+# Script License      : Apache License, Version 2 or later
+#
+# ----------------------------------------------------------------------------
+
 dist: xenial
+arch: ppc64le
+  - amd64
+  - ppc64le
 services:
   - xvfb
 env:
@@ -109,6 +124,76 @@ matrix:
       <<: *ruby
     - env: TASK=//rb:lint
       <<: *ruby
+      # arch: ppc64le  
+    - env: MARIONETTE=1 SELENIUM_BROWSER=firefox NPM=test
+      arch: ppc64le
+      <<: *node
+      <<: *firefox-latest
+    - env: MARIONETTE=1 MOZ_HEADLESS=1 BZL="test --test_tag_filters=firefox //javascript/atoms/... //javascript/selenium-atoms/... //javascript/webdriver/..."
+      arch: ppc64le
+      <<: *java
+      <<: *firefox-latest
+    - env: CHROME=1 BZL="test --test_tag_filters=chrome //javascript/atoms/... //javascript/selenium-atoms/... //javascript/webdriver/...  //javascript/chrome-driver/..."
+      arch: ppc64le
+      <<: *java
+      <<: *chrome
+    - env: TOXENV=flake8
+      arch: ppc64le
+      <<: *python
+      python: 3.7
+    - env: TOXENV=docs
+      arch: ppc64le
+      <<: *python
+      python: 3.7
+    - env: BZL="test //py:unit"
+      arch: ppc64le
+      <<: *python
+      python: 3.7
+    - env: CHROME=1 BZL="test //py:test-chrome"
+      arch: ppc64le
+      <<: *python
+      <<: *chrome
+      python: 3.7
+    - env: MARIONETTE=1 BZL="test --jobs 1 //py:test-remote"
+      arch: ppc64le
+      <<: *python
+      <<: *firefox-nightly
+      python: 3.7
+    - env: MARIONETTE=1 BZL="test //py:test-firefox"
+      arch: ppc64le
+      <<: *python
+      <<: *firefox-nightly
+      python: 3.7
+    - env: TASK=//rb:unit-test
+      arch: ppc64le
+      <<: *ruby
+    - env: TASK=//rb:unit-test
+      arch: ppc64le
+      <<: *ruby
+      rvm: jruby-9.2.6.0
+    - env: CHROME=1 TASK=//rb:chrome-test
+      arch: ppc64le
+      <<: *ruby
+      <<: *chrome
+    - env: MARIONETTE=1 TASK=//rb:firefox-test
+      arch: ppc64le
+      <<: *ruby
+      <<: *firefox-latest
+    - env: CHROME=1 TASK=//rb:remote-chrome-test
+      arch: ppc64le
+      <<: *ruby
+      <<: *chrome
+    - env: MARIONETTE=1 TASK=//rb:remote-firefox-test
+      arch: ppc64le
+      <<: *ruby
+      <<: *firefox-latest
+    - env: TASK=//rb:docs
+      arch: ppc64le
+      <<: *ruby
+    - env: TASK=//rb:lint
+      arch: ppc64le
+      <<: *ruby
+            
 install: ./scripts/travis/install.sh
 before_script: ./scripts/travis/before_script.sh
 script: travis_wait 60 ./scripts/travis/script.sh
